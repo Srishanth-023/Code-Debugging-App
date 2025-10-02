@@ -1,0 +1,233 @@
+{% extends 'base/base.html' %}
+{% load challenge_extras %}
+
+{% block title %}{{ week.title }} - Code Debugging App{% endblock %}
+
+{% block content %}
+<!-- Week Header -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-lg-8">
+                        <h2 class="mb-2">
+                            <i class="fas fa-calendar-week"></i> {{ week.title }}
+                            <span class="badge bg-light text-dark ms-2">Week {{ week.week_number }}</span>
+                        </h2>
+                        <p class="mb-3 opacity-75">{{ week.description }}</p>
+                        <div class="d-flex flex-wrap gap-2 align-items-center">
+                            <span class="badge bg-light text-dark">
+                                <i class="fas fa-calendar"></i> {{ week.start_date }} - {{ week.end_date }}
+                            </span>
+                            <span class="badge bg-{% if week.is_current_week %}success{% elif week.is_past_week %}secondary{% else %}warning{% endif %}">
+                                {% if week.is_current_week %}
+                                    <i class="fas fa-play"></i> Current Week
+                                {% elif week.is_past_week %}
+                                    <i class="fas fa-history"></i> Past Week
+                                {% else %}
+                                    <i class="fas fa-clock"></i> Upcoming Week
+                                {% endif %}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 text-lg-end">
+                        {% if user_progress and not user.is_admin_user %}
+                        <div class="mt-3">
+                            <h5>Your Progress</h5>
+                            <div class="progress mb-2" style="height: 25px;">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                     role="progressbar" 
+                                     style="width: {{ user_progress.completion_percentage }}%">
+                                    {{ user_progress.completion_percentage|floatformat:1 }}%
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <small>{{ user_progress.challenges_completed }}/{{ user_progress.total_challenges }} completed</small>
+                                <small><i class="fas fa-star"></i> {{ user_progress.points_earned }} points</small>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Week Navigation -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="week-nav">
+            {% for nav_week in user.userprogress_set.all|dictsort:"week.week_number" %}
+            <a href="{% url 'challenges:week_challenges' nav_week.week.week_number %}" 
+               class="btn {% if nav_week.week == week %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                Week {{ nav_week.week.week_number }}
+                {% if nav_week.completion_percentage == 100 %}
+                    <i class="fas fa-check-circle ms-1"></i>
+                {% elif nav_week.completion_percentage > 0 %}
+                    <i class="fas fa-clock ms-1"></i>
+                {% endif %}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Challenges Grid -->
+<div class="row">
+    {% for challenge in challenges %}
+    <div class="col-lg-6 col-xl-4 mb-4">
+        <div class="card challenge-card h-100 position-relative" 
+             onclick="navigateToChallenge({{ challenge.id }})">
+            <!-- Status Badge -->
+            {% if not user.is_admin_user %}
+            <div class="challenge-status">
+                {% with user_submissions|get_item:challenge.id as submission %}
+                    {% if submission %}
+                        {% if submission.status == 'correct' %}
+                            <span class="badge bg-success">
+                                <i class="fas fa-check-circle"></i> Completed
+                            </span>
+                        {% elif submission.status == 'incorrect' %}
+                            <span class="badge bg-danger">
+                                <i class="fas fa-times-circle"></i> Incorrect
+                            </span>
+                        {% else %}
+                            <span class="badge bg-warning">
+                                <i class="fas fa-clock"></i> Attempted
+                            </span>
+                        {% endif %}
+                    {% else %}
+                        <span class="badge bg-secondary">
+                            <i class="fas fa-circle"></i> Not Started
+                        </span>
+                    {% endif %}
+                {% endwith %}
+            </div>
+            {% endif %}
+            
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-start">
+                    <h6 class="mb-0">{{ challenge.title }}</h6>
+                    <span class="badge bg-primary">{{ challenge.order }}</span>
+                </div>
+            </div>
+            
+            <div class="card-body">
+                <p class="text-muted small mb-3">{{ challenge.description|truncatewords:15 }}</p>
+                
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="badge bg-{% if challenge.difficulty == 'easy' %}success{% elif challenge.difficulty == 'medium' %}warning{% else %}danger{% endif %} me-1">
+                            <i class="fas fa-signal"></i> {{ challenge.get_difficulty_display }}
+                        </span>
+                        <span class="badge bg-warning text-dark">
+                            <i class="fas fa-star"></i> {{ challenge.points }}
+                        </span>
+                    </div>
+                    
+                    {% if not user.is_admin_user %}
+                    {% with user_submissions|get_item:challenge.id as submission %}
+                        {% if submission and submission.status == 'correct' %}
+                            <i class="fas fa-trophy text-warning" title="Completed"></i>
+                        {% else %}
+                            <i class="fas fa-arrow-right text-primary"></i>
+                        {% endif %}
+                    {% endwith %}
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="card-footer bg-transparent border-0">
+                <a href="{% url 'challenges:challenge_detail' challenge.id %}" 
+                   class="btn btn-primary btn-sm w-100">
+                    <i class="fas fa-code"></i> 
+                    {% if not user.is_admin_user %}
+                        {% with user_submissions|get_item:challenge.id as submission %}
+                            {% if submission and submission.status == 'correct' %}
+                                Review Solution
+                            {% elif submission %}
+                                Continue Working
+                            {% else %}
+                                Start Challenge
+                            {% endif %}
+                        {% endwith %}
+                    {% else %}
+                        View Challenge
+                    {% endif %}
+                </a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body text-center py-5">
+                <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">No Challenges Available</h5>
+                <p class="text-muted">This week doesn't have any challenges yet. Check back later!</p>
+                {% if user.is_admin_user %}
+                <a href="{% url 'challenges:create_challenge' %}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Add Challenge
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Admin Actions -->
+{% if user.is_admin_user %}
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card border-info">
+            <div class="card-header bg-info text-white">
+                <h5><i class="fas fa-tools"></i> Admin Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 mb-2">
+                        <a href="{% url 'challenges:create_challenge' %}" class="btn btn-success w-100">
+                            <i class="fas fa-plus"></i> Add New Challenge
+                        </a>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <a href="{% url 'challenges:manage_challenges' week.id %}" class="btn btn-primary w-100">
+                            <i class="fas fa-edit"></i> Manage Challenges
+                        </a>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <a href="/admin/challenges/challenge/?week={{ week.id }}" class="btn btn-info w-100">
+                            <i class="fas fa-cog"></i> Django Admin
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Custom template filter for getting dictionary items in JavaScript
+// This would normally be handled by a custom template filter in Django
+document.addEventListener('DOMContentLoaded', function() {
+    // Add click handlers for challenge cards
+    const challengeCards = document.querySelectorAll('.challenge-card');
+    challengeCards.forEach(card => {
+        card.style.cursor = 'pointer';
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-2px)';
+        });
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+});
+</script>
+{% endblock %}

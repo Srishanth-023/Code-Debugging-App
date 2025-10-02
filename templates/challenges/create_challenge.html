@@ -1,0 +1,124 @@
+{% extends 'base/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Create Challenge - Code Debugging App{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-plus"></i> Create New Challenge</h2>
+            <a href="{% url 'dashboard:admin_dashboard' %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-code"></i> Challenge Details</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-lg-6">
+                            {{ form.week|as_crispy_field }}
+                            {{ form.title|as_crispy_field }}
+                            {{ form.description|as_crispy_field }}
+                        </div>
+                        <div class="col-lg-6">
+                            {{ form.difficulty|as_crispy_field }}
+                            {{ form.points|as_crispy_field }}
+                            {{ form.order|as_crispy_field }}
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <label for="{{ form.buggy_code.id_for_label }}" class="form-label">
+                                Buggy Code <span class="text-danger">*</span>
+                            </label>
+                            <div class="code-editor-container">
+                                <div class="code-editor-toolbar">
+                                    <i class="fas fa-code"></i> Python Code Editor
+                                    <button type="button" class="btn btn-sm btn-success float-end" onclick="testCode()">
+                                        <i class="fas fa-play"></i> Test Code
+                                    </button>
+                                </div>
+                                {{ form.buggy_code }}
+                            </div>
+                            {% if form.buggy_code.help_text %}
+                                <div class="form-text">{{ form.buggy_code.help_text }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            {{ form.expected_output|as_crispy_field }}
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save"></i> Create Challenge
+                        </button>
+                        <a href="{% url 'dashboard:admin_dashboard' %}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Test Output Panel -->
+<div id="output-panel" class="output-panel mt-3" style="display: none;">
+    <div class="code-editor-toolbar">
+        <i class="fas fa-terminal"></i> Test Output
+        <button class="btn btn-sm btn-outline-light float-end" onclick="document.getElementById('output-panel').style.display='none'">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    <div id="output-content" class="output-content"></div>
+</div>
+
+<!-- Loading Spinner -->
+<div id="loading-spinner" class="loading-spinner">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-2">Testing code...</p>
+</div>
+
+{% csrf_token %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function testCode() {
+    const codeTextarea = document.getElementById('id_buggy_code');
+    const code = codeTextarea.value.trim();
+    
+    if (!code) {
+        alert('Please enter some code to test.');
+        return;
+    }
+    
+    executeCode(code);
+}
+
+// Make sure the textarea becomes a CodeMirror editor
+document.addEventListener('DOMContentLoaded', function() {
+    const buggyCodeTextarea = document.getElementById('id_buggy_code');
+    if (buggyCodeTextarea) {
+        buggyCodeTextarea.className += ' code-editor-textarea';
+    }
+});
+</script>
+{% endblock %}

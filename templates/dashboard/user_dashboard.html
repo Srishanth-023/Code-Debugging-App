@@ -1,0 +1,207 @@
+{% extends 'base/base.html' %}
+
+{% block title %}User Dashboard - Code Debugging App{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2><i class="fas fa-tachometer-alt"></i> Welcome, {{ user.get_full_name|default:user.username }}!</h2>
+        <p class="text-muted">Track your progress and solve coding challenges.</p>
+    </div>
+</div>
+
+<!-- Current Week Progress -->
+{% if current_week %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card border-primary">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-calendar-week"></i> {{ current_week.title }}
+                    <span class="badge bg-light text-dark ms-2">Week {{ current_week.week_number }}</span>
+                </h5>
+            </div>
+            <div class="card-body">
+                <p>{{ current_week.description }}</p>
+                
+                {% if user_progress %}
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="progress mb-3" style="height: 25px;">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                 role="progressbar" 
+                                 style="width: {{ user_progress.completion_percentage }}%">
+                                {{ user_progress.completion_percentage|floatformat:1 }}%
+                            </div>
+                        </div>
+                        <p class="mb-0">
+                            <strong>Progress: </strong>
+                            {{ user_progress.challenges_completed }} of {{ user_progress.total_challenges }} challenges completed
+                        </p>
+                        <p class="text-success">
+                            <i class="fas fa-star"></i> {{ user_progress.points_earned }} points earned this week
+                        </p>
+                    </div>
+                    <div class="col-lg-4 text-lg-end">
+                        <a href="{% url 'challenges:week_challenges' current_week.week_number %}" 
+                           class="btn btn-primary">
+                            <i class="fas fa-play"></i> Start Challenges
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<!-- No Current Week -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle"></i> No active challenges this week. Check back later for new challenges!
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4>{{ total_score }}</h4>
+                        <p class="mb-0">Total Points</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-star fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4>{{ recent_submissions|length }}</h4>
+                        <p class="mb-0">Recent Submissions</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-code fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4>{{ all_weeks|length }}</h4>
+                        <p class="mb-0">Total Weeks</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-calendar fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card bg-danger text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        {% if current_week %}
+                            <h4>{{ current_week.week_number }}</h4>
+                            <p class="mb-0">Current Week</p>
+                        {% else %}
+                            <h4>-</h4>
+                            <p class="mb-0">No Active Week</p>
+                        {% endif %}
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-clock fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Weeks Navigation -->
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-list"></i> All Weeks</h5>
+            </div>
+            <div class="card-body">
+                {% if all_weeks %}
+                    <div class="list-group">
+                        {% for week in all_weeks %}
+                        <a href="{% url 'challenges:week_challenges' week.week_number %}" 
+                           class="list-group-item list-group-item-action {% if week == current_week %}active{% endif %}">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">
+                                    Week {{ week.week_number }}: {{ week.title }}
+                                    {% if week.is_current_week %}
+                                        <span class="badge bg-primary ms-2">Current</span>
+                                    {% elif week.is_past_week %}
+                                        <span class="badge bg-secondary ms-2">Past</span>
+                                    {% elif week.is_future_week %}
+                                        <span class="badge bg-warning ms-2">Upcoming</span>
+                                    {% endif %}
+                                </h6>
+                                <small>{{ week.start_date }} - {{ week.end_date }}</small>
+                            </div>
+                            <p class="mb-1">{{ week.description|truncatewords:15 }}</p>
+                        </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted">No weeks available yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Submissions -->
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-history"></i> Recent Submissions</h5>
+            </div>
+            <div class="card-body">
+                {% if recent_submissions %}
+                    {% for submission in recent_submissions %}
+                    <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                        <div>
+                            <small class="text-muted">{{ submission.challenge.title|truncatewords:3 }}</small>
+                            <br>
+                            <span class="badge bg-{% if submission.status == 'correct' %}success{% elif submission.status == 'incorrect' %}danger{% else %}warning{% endif %}">
+                                {{ submission.get_status_display }}
+                            </span>
+                            {% if submission.status == 'correct' %}
+                                <span class="badge bg-primary ms-1">{{ submission.points_earned }} pts</span>
+                            {% endif %}
+                        </div>
+                        <small class="text-muted">{{ submission.submitted_at|date:"M d" }}</small>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted">No submissions yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

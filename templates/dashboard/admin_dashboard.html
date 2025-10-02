@@ -1,0 +1,189 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Admin Dashboard - Code Debugging App{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2><i class="fas fa-cog"></i> Admin Dashboard</h2>
+        <p class="text-muted">Manage challenges, weeks, and monitor user progress.</p>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4>{{ total_users }}</h4>
+                        <p class="mb-0">Total Users</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-users fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4>{{ total_weeks }}</h4>
+                        <p class="mb-0">Total Weeks</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-calendar fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4>{{ total_challenges }}</h4>
+                        <p class="mb-0">Total Challenges</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-code fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4>{{ total_submissions }}</h4>
+                        <p class="mb-0">Total Submissions</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-upload fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-bolt"></i> Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 mb-2">
+                        <a href="{% url 'challenges:create_week' %}" class="btn btn-primary btn-lg w-100">
+                            <i class="fas fa-plus"></i> Create New Week
+                        </a>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <a href="{% url 'challenges:create_challenge' %}" class="btn btn-success btn-lg w-100">
+                            <i class="fas fa-code"></i> Add Challenge
+                        </a>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <a href="/admin/" class="btn btn-info btn-lg w-100">
+                            <i class="fas fa-cog"></i> Django Admin
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Activity -->
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-activity"></i> Recent Submissions</h5>
+            </div>
+            <div class="card-body">
+                {% if recent_submissions %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Challenge</th>
+                                    <th>Week</th>
+                                    <th>Status</th>
+                                    <th>Points</th>
+                                    <th>Submitted</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for submission in recent_submissions %}
+                                <tr>
+                                    <td>{{ submission.user.username }}</td>
+                                    <td>{{ submission.challenge.title|truncatewords:3 }}</td>
+                                    <td>Week {{ submission.challenge.week.week_number }}</td>
+                                    <td>
+                                        <span class="badge bg-{% if submission.status == 'correct' %}success{% elif submission.status == 'incorrect' %}danger{% else %}warning{% endif %}">
+                                            {{ submission.get_status_display }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {% if submission.status == 'correct' %}
+                                            {{ submission.points_earned }}
+                                        {% else %}
+                                            0
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ submission.submitted_at|date:"M d, H:i" }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted">No submissions yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Weekly Statistics -->
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-chart-bar"></i> Weekly Statistics</h5>
+            </div>
+            <div class="card-body">
+                {% if weekly_stats %}
+                    {% for week in weekly_stats %}
+                    <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                        <div>
+                            <h6 class="mb-0">Week {{ week.week_number }}</h6>
+                            <small class="text-muted">{{ week.title|truncatewords:3 }}</small>
+                        </div>
+                        <div class="text-end">
+                            <div class="text-primary">{{ week.challenge_count }} challenges</div>
+                            <div class="text-success">{{ week.submission_count }} submissions</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted">No weekly data available.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
