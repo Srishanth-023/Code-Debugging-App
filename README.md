@@ -217,7 +217,7 @@ SECURE_BROWSER_XSS_FILTER = True
 
 **Sri** - Embedded engineer and ML .
 - GitHub: [@Srishanth-023](https://github.com/Srishanth-023)
-- Email: your.email@example.com
+- Email: srishanth232007@gmail.com
 
 ## 🙏 **Acknowledgments**
 
