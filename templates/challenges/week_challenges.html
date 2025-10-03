@@ -78,28 +78,28 @@
 <div class="row">
     {% for challenge in challenges %}
     <div class="col-lg-6 col-xl-4 mb-4">
-        <div class="card challenge-card h-100 position-relative" 
+        <div class="card challenge-card h-100" 
              onclick="navigateToChallenge({{ challenge.id }})">
             <!-- Status Badge -->
             {% if not user.is_admin_user %}
-            <div class="challenge-status">
+            <div class="position-absolute top-0 end-0 m-2" style="z-index: 10;">
                 {% with user_submissions|get_item:challenge.id as submission %}
                     {% if submission %}
                         {% if submission.status == 'correct' %}
-                            <span class="badge bg-success">
+                            <span class="badge bg-success fs-6">
                                 <i class="fas fa-check-circle"></i> Completed
                             </span>
                         {% elif submission.status == 'incorrect' %}
-                            <span class="badge bg-danger">
+                            <span class="badge bg-danger fs-6">
                                 <i class="fas fa-times-circle"></i> Incorrect
                             </span>
                         {% else %}
-                            <span class="badge bg-warning">
+                            <span class="badge bg-warning fs-6">
                                 <i class="fas fa-clock"></i> Attempted
                             </span>
                         {% endif %}
                     {% else %}
-                        <span class="badge bg-secondary">
+                        <span class="badge bg-secondary fs-6">
                             <i class="fas fa-circle"></i> Not Started
                         </span>
                     {% endif %}

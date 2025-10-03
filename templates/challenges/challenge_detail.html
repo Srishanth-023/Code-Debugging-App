@@ -83,14 +83,18 @@
 <!-- Main Content -->
 <div class="row">
     <!-- Code Editor -->
-    <div class="col-lg-8">
+    <div class="col-lg-6">
         <div class="card mb-4">
-            <div class="card-header">
-                <h5><i class="fas fa-code"></i> Code Editor</h5>
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-code"></i> Code Editor</h5>
+                {% if user_submission and user_submission.status == 'correct' %}
+                    <span class="badge bg-success">Completed - Read Only</span>
+                {% endif %}
             </div>
             <div class="card-body p-0">
                 <div class="code-editor-container">
                     <div class="code-editor-toolbar">
+                        {% if not user_submission or user_submission.status != 'correct' %}
                         <button class="btn btn-sm btn-success btn-run" title="Run Code (Ctrl+Enter)">
                             <i class="fas fa-play"></i> Run Code
                         </button>
@@ -104,25 +108,21 @@
                             <i class="fas fa-check"></i> Submit Solution
                         </button>
                         {% endif %}
-                        <button class="btn btn-sm btn-dark btn-fullscreen" title="Toggle Fullscreen (F11)">
+                        {% else %}
+                        <button class="btn btn-sm btn-success btn-run" title="Run Code (Ctrl+Enter)">
+                            <i class="fas fa-play"></i> Test Code
+                        </button>
+                        <span class="badge bg-info">Challenge Completed</span>
+                        {% endif %}
+                        <button class="btn btn-sm btn-dark btn-fullscreen" title="Toggle Fullscreen (F11)" onclick="toggleFullscreen()">
                             <i class="fas fa-expand"></i> Fullscreen
                         </button>
                     </div>
                     <textarea class="code-editor-textarea" 
-                              data-original-code="{{ challenge.buggy_code }}">{% if user_submission %}{{ user_submission.submitted_code }}{% else %}{{ challenge.buggy_code }}{% endif %}</textarea>
+                              data-original-code="{{ challenge.buggy_code }}"
+                              {% if user_submission and user_submission.status == 'correct' %}readonly{% endif %}>{% if user_submission %}{{ user_submission.submitted_code }}{% else %}{{ challenge.buggy_code }}{% endif %}</textarea>
                 </div>
             </div>
-        </div>
-        
-        <!-- Output Panel -->
-        <div id="output-panel" class="output-panel" style="display: none;">
-            <div class="code-editor-toolbar">
-                <i class="fas fa-terminal"></i> Output
-                <button class="btn btn-sm btn-outline-light float-end" onclick="document.getElementById('output-panel').style.display='none'">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div id="output-content" class="output-content"></div>
         </div>
         
         <!-- Loading Spinner -->
@@ -134,15 +134,37 @@
         </div>
     </div>
     
-    <!-- Challenge Info Sidebar -->
-    <div class="col-lg-4">
-        <!-- Expected Output -->
+    <!-- Right Side - Output and Info -->
+    <div class="col-lg-6">
+        <!-- Output Panel -->
         <div class="card mb-3">
-            <div class="card-header">
-                <h6><i class="fas fa-bullseye"></i> Expected Output</h6>
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-terminal"></i> Output</h5>
+                <button class="btn btn-sm btn-outline-secondary" onclick="clearOutput()">
+                    <i class="fas fa-trash"></i> Clear
+                </button>
             </div>
-            <div class="card-body">
-                <pre class="bg-light p-3 border-radius-lg"><code>{{ challenge.expected_output }}</code></pre>
+            <div class="card-body p-0">
+                <div id="output-panel" class="output-panel-right" style="display: block;">
+                    <div id="output-content" class="output-content-right">
+                        <div class="text-muted text-center py-4">
+                            <i class="fas fa-play-circle fa-2x mb-2"></i>
+                            <p>Click "Run Code" to see output here</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Challenge Info Sidebar -->
+        <div class="challenge-sidebar">
+        <!-- Expected Output -->
+        <div class="card mb-3 border-success">
+            <div class="card-header bg-success text-white">
+                <h6 class="mb-0"><i class="fas fa-bullseye"></i> Expected Output</h6>
+            </div>
+            <div class="card-body bg-light">
+                <pre class="expected-output"><code>{{ challenge.expected_output }}</code></pre>
             </div>
         </div>
         

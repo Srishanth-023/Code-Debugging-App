@@ -3,10 +3,24 @@
 {% block title %}User Dashboard - Code Debugging App{% endblock %}
 
 {% block content %}
-<div class="row">
+<div class="row mb-4">
     <div class="col-12">
-        <h2><i class="fas fa-tachometer-alt"></i> Welcome, {{ user.get_full_name|default:user.username }}!</h2>
-        <p class="text-muted">Track your progress and solve coding challenges.</p>
+        <div class="dashboard-card card">
+            <div class="card-body text-center py-5">
+                <h1 class="display-5 mb-3">
+                    <i class="fas fa-code"></i> Welcome, {{ user.get_full_name|default:user.username }}!
+                </h1>
+                <p class="lead mb-0">Track your progress and master coding challenges</p>
+                <div class="mt-3">
+                    <span class="badge bg-light text-dark fs-6 me-2">
+                        <i class="fas fa-trophy"></i> {{ total_score }} Total Points
+                    </span>
+                    <span class="badge bg-light text-dark fs-6">
+                        <i class="fas fa-calendar"></i> {{ all_weeks|length }} Weeks Available
+                    </span>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -66,17 +80,17 @@
 {% endif %}
 
 <!-- Statistics Cards -->
-<div class="row mb-4">
+<div class="row mb-5">
     <div class="col-lg-3 col-md-6 mb-3">
-        <div class="card bg-success text-white">
+        <div class="card stats-card h-100">
             <div class="card-body">
-                <div class="d-flex justify-content-between">
+                <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h4>{{ total_score }}</h4>
-                        <p class="mb-0">Total Points</p>
+                        <h3 class="text-success mb-1">{{ total_score }}</h3>
+                        <p class="text-muted mb-0">Total Points</p>
                     </div>
-                    <div class="align-self-center">
-                        <i class="fas fa-star fa-2x"></i>
+                    <div class="text-success">
+                        <i class="fas fa-star fa-2x opacity-75"></i>
                     </div>
                 </div>
             </div>
@@ -84,15 +98,15 @@
     </div>
     
     <div class="col-lg-3 col-md-6 mb-3">
-        <div class="card bg-info text-white">
+        <div class="card stats-card h-100">
             <div class="card-body">
-                <div class="d-flex justify-content-between">
+                <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h4>{{ recent_submissions|length }}</h4>
-                        <p class="mb-0">Recent Submissions</p>
+                        <h3 class="text-info mb-1">{{ recent_submissions|length }}</h3>
+                        <p class="text-muted mb-0">Recent Submissions</p>
                     </div>
-                    <div class="align-self-center">
-                        <i class="fas fa-code fa-2x"></i>
+                    <div class="text-info">
+                        <i class="fas fa-code fa-2x opacity-75"></i>
                     </div>
                 </div>
             </div>
@@ -100,15 +114,15 @@
     </div>
     
     <div class="col-lg-3 col-md-6 mb-3">
-        <div class="card bg-warning text-white">
+        <div class="card stats-card h-100">
             <div class="card-body">
-                <div class="d-flex justify-content-between">
+                <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h4>{{ all_weeks|length }}</h4>
-                        <p class="mb-0">Total Weeks</p>
+                        <h3 class="text-warning mb-1">{{ all_weeks|length }}</h3>
+                        <p class="text-muted mb-0">Total Weeks</p>
                     </div>
-                    <div class="align-self-center">
-                        <i class="fas fa-calendar fa-2x"></i>
+                    <div class="text-warning">
+                        <i class="fas fa-calendar fa-2x opacity-75"></i>
                     </div>
                 </div>
             </div>
@@ -116,20 +130,20 @@
     </div>
     
     <div class="col-lg-3 col-md-6 mb-3">
-        <div class="card bg-danger text-white">
+        <div class="card stats-card h-100">
             <div class="card-body">
-                <div class="d-flex justify-content-between">
+                <div class="d-flex justify-content-between align-items-center">
                     <div>
                         {% if current_week %}
-                            <h4>{{ current_week.week_number }}</h4>
-                            <p class="mb-0">Current Week</p>
+                            <h3 class="text-primary mb-1">{{ current_week.week_number }}</h3>
+                            <p class="text-muted mb-0">Current Week</p>
                         {% else %}
-                            <h4>-</h4>
-                            <p class="mb-0">No Active Week</p>
+                            <h3 class="text-muted mb-1">-</h3>
+                            <p class="text-muted mb-0">No Active Week</p>
                         {% endif %}
                     </div>
-                    <div class="align-self-center">
-                        <i class="fas fa-clock fa-2x"></i>
+                    <div class="text-primary">
+                        <i class="fas fa-clock fa-2x opacity-75"></i>
                     </div>
                 </div>
             </div>

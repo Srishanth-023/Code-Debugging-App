@@ -1,0 +1,98 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Manage Challenges - {{ week.title }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2><i class="fas fa-cog"></i> Manage Challenges</h2>
+                <p class="text-muted">{{ week.title }} - Week {{ week.week_number }}</p>
+            </div>
+            <div>
+                <a href="{% url 'challenges:create_challenge' %}" class="btn btn-success me-2">
+                    <i class="fas fa-plus"></i> Add Challenge
+                </a>
+                <a href="{% url 'dashboard:admin_dashboard' %}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-list"></i> Challenges in {{ week.title }}</h5>
+            </div>
+            <div class="card-body">
+                {% if challenges %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Order</th>
+                                    <th>Title</th>
+                                    <th>Difficulty</th>
+                                    <th>Points</th>
+                                    <th>Created</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for challenge in challenges %}
+                                <tr>
+                                    <td>
+                                        <span class="badge bg-primary">{{ challenge.order }}</span>
+                                    </td>
+                                    <td>
+                                        <strong>{{ challenge.title }}</strong>
+                                        <br>
+                                        <small class="text-muted">{{ challenge.description|truncatewords:10 }}</small>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-{% if challenge.difficulty == 'easy' %}success{% elif challenge.difficulty == 'medium' %}warning{% else %}danger{% endif %}">
+                                            {{ challenge.get_difficulty_display }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-warning text-dark">
+                                            <i class="fas fa-star"></i> {{ challenge.points }}
+                                        </span>
+                                    </td>
+                                    <td>{{ challenge.created_at|date:"M d, Y" }}</td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a href="{% url 'challenges:challenge_detail' challenge.id %}" 
+                                               class="btn btn-sm btn-outline-primary" title="View">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="/admin/challenges/challenge/{{ challenge.id }}/change/" 
+                                               class="btn btn-sm btn-outline-secondary" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No Challenges Yet</h5>
+                        <p class="text-muted">This week doesn't have any challenges. Create the first one!</p>
+                        <a href="{% url 'challenges:create_challenge' %}" class="btn btn-success">
+                            <i class="fas fa-plus"></i> Create First Challenge
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

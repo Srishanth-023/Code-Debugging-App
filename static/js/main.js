@@ -146,7 +146,7 @@ function displayExecutionResult(result) {
     if (!outputPanel || !outputContent) return;
     
     let output = '';
-    let panelClass = 'output-panel';
+    let panelClass = 'output-panel-right';
     
     if (result.error) {
         output = 'Error:\n' + result.error;
@@ -337,8 +337,51 @@ function navigateToWeek(weekNumber) {
     window.location.href = `/challenges/week/${weekNumber}/`;
 }
 
+// Fullscreen functionality
+function toggleFullscreen() {
+    const editorContainer = document.querySelector('.code-editor-container');
+    if (!editorContainer) return;
+    
+    editorContainer.classList.toggle('code-editor-fullscreen');
+    
+    const fullscreenBtn = document.querySelector('.btn-fullscreen i');
+    if (editorContainer.classList.contains('code-editor-fullscreen')) {
+        fullscreenBtn.className = 'fas fa-compress';
+        document.body.style.overflow = 'hidden';
+    } else {
+        fullscreenBtn.className = 'fas fa-expand';
+        document.body.style.overflow = 'auto';
+    }
+    
+    // Refresh CodeMirror after fullscreen toggle
+    setTimeout(() => {
+        const textarea = document.querySelector('.code-editor-textarea');
+        if (textarea && textarea.codeMirrorInstance) {
+            textarea.codeMirrorInstance.refresh();
+        }
+    }, 100);
+}
+
+// Clear output function
+function clearOutput() {
+    const outputContent = document.getElementById('output-content');
+    const outputPanel = document.getElementById('output-panel');
+    
+    if (outputContent && outputPanel) {
+        outputContent.innerHTML = `
+            <div class="text-muted text-center py-4">
+                <i class="fas fa-play-circle fa-2x mb-2"></i>
+                <p>Click "Run Code" to see output here</p>
+            </div>
+        `;
+        outputPanel.className = 'output-panel-right';
+    }
+}
+
 // Export functions for global use
 window.executeCode = executeCode;
 window.submitSolution = submitSolution;
 window.navigateToChallenge = navigateToChallenge;
 window.navigateToWeek = navigateToWeek;
+window.toggleFullscreen = toggleFullscreen;
+window.clearOutput = clearOutput;
