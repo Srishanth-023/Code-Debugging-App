@@ -585,6 +585,35 @@ main.container {
     font-weight: 500;
 }
 
+/* Challenge detail specific adjustments */
+.challenge-info .d-flex {
+    align-items: center; /* vertical centering */
+}
+.challenge-info .d-flex .badge {
+    display: inline-flex;
+    align-items: center; /* center icon and text vertically */
+    justify-content: center; /* center content horizontally inside badge */
+    text-align: center;
+}
+
+/* Make sure the badges block wraps don't align to page center but to their container */
+.challenge-info .col-lg-8 .d-flex {
+    justify-content: flex-start; /* keep badges aligned to left of the content column */
+}
+
+/* Back to Week link should be more visible */
+.back-to-week {
+    color: #0b5ed7; /* Bootstrap primary blue for visibility */
+    background-color: transparent;
+    border-color: rgba(11,94,215,0.15);
+}
+.back-to-week:hover, .back-to-week:focus {
+    color: #ffffff;
+    background-color: #0b5ed7;
+    border-color: #0b5ed7;
+    text-decoration: none;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .container-fluid {
