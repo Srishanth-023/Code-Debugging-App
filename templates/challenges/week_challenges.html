@@ -32,7 +32,7 @@
                         </div>
                     </div>
                     <div class="col-lg-4 text-lg-end">
-                        {% if user_progress and not user.is_admin_user %}
+                        {% if user_progress and not user.is_superuser %}
                         <div class="mt-3">
                             <h5>Your Progress</h5>
                             <div class="progress mb-2" style="height: 25px;">
@@ -81,7 +81,7 @@
         <div class="card challenge-card h-100" 
              onclick="navigateToChallenge({{ challenge.id }})">
             <!-- Status Badge -->
-            {% if not user.is_admin_user %}
+            {% if not user.is_superuser %}
             <div class="position-absolute top-0 end-0 m-2" style="z-index: 10;">
                 {% with user_submissions|get_item:challenge.id as submission %}
                     {% if submission %}
@@ -127,7 +127,7 @@
                         </span>
                     </div>
                     
-                    {% if not user.is_admin_user %}
+                    {% if not user.is_superuser %}
                     {% with user_submissions|get_item:challenge.id as submission %}
                         {% if submission and submission.status == 'correct' %}
                             <i class="fas fa-trophy text-warning" title="Completed"></i>
@@ -143,7 +143,7 @@
                 <a href="{% url 'challenges:challenge_detail' challenge.id %}" 
                    class="btn btn-primary btn-sm w-100">
                     <i class="fas fa-code"></i> 
-                    {% if not user.is_admin_user %}
+                    {% if not user.is_superuser %}
                         {% with user_submissions|get_item:challenge.id as submission %}
                             {% if submission and submission.status == 'correct' %}
                                 Review Solution
@@ -167,7 +167,7 @@
                 <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
                 <h5 class="text-muted">No Challenges Available</h5>
                 <p class="text-muted">This week doesn't have any challenges yet. Check back later!</p>
-                {% if user.is_admin_user %}
+                {% if user.is_superuser %}
                 <a href="{% url 'challenges:create_challenge' %}" class="btn btn-primary">
                     <i class="fas fa-plus"></i> Add Challenge
                 </a>
@@ -179,7 +179,7 @@
 </div>
 
 <!-- Admin Actions -->
-{% if user.is_admin_user %}
+{% if user.is_superuser %}
 <div class="row mt-4">
     <div class="col-12">
         <div class="card border-info">

@@ -13,7 +13,7 @@ from authentication.models import CustomUser
 
 @login_required
 def user_dashboard(request):
-    if request.user.is_admin_user:
+    if request.user.is_superuser:
         return redirect('dashboard:admin_dashboard')
     
     # Get current week
@@ -56,7 +56,7 @@ def user_dashboard(request):
 @login_required
 @staff_member_required
 def admin_dashboard(request):
-    if not request.user.is_admin_user:
+    if not request.user.is_superuser:
         messages.error(request, 'Access denied. Admin privileges required.')
         return redirect('dashboard:user_dashboard')
     

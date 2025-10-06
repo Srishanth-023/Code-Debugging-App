@@ -83,11 +83,14 @@ function setupEditorToolbar(editor, container) {
         });
     }
     
-    // Fullscreen button
+    // Fullscreen button - use global toggle to avoid conflicting CodeMirror fullScreen option
     const fullscreenBtn = toolbar.querySelector('.btn-fullscreen');
     if (fullscreenBtn) {
         fullscreenBtn.addEventListener('click', function() {
-            editor.setOption("fullScreen", !editor.getOption("fullScreen"));
+            // Use the page-level toggle which applies a fullscreen class to the container
+            toggleFullscreen();
+            // Refresh this editor after a short delay
+            setTimeout(() => editor.refresh && editor.refresh(), 120);
         });
     }
 }
@@ -344,12 +347,12 @@ function toggleFullscreen() {
     
     editorContainer.classList.toggle('code-editor-fullscreen');
     
-    const fullscreenBtn = document.querySelector('.btn-fullscreen i');
+    const fullscreenIcon = document.querySelector('.btn-fullscreen i');
     if (editorContainer.classList.contains('code-editor-fullscreen')) {
-        fullscreenBtn.className = 'fas fa-compress';
+        if (fullscreenIcon) fullscreenIcon.className = 'fas fa-compress';
         document.body.style.overflow = 'hidden';
     } else {
-        fullscreenBtn.className = 'fas fa-expand';
+        if (fullscreenIcon) fullscreenIcon.className = 'fas fa-expand';
         document.body.style.overflow = 'auto';
     }
     

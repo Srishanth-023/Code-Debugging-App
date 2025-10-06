@@ -1,23 +1,24 @@
 /* Custom CSS for Code Debugging App */
 
 :root {
-    --primary-color: #0066cc;
-    --primary-dark: #004499;
-    --success-color: #28a745;
-    --danger-color: #dc3545;
-    --warning-color: #ffc107;
-    --info-color: #17a2b8;
-    --dark-color: #2c3e50;
-    --light-bg: #f8f9fa;
-    --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    --border-radius: 12px;
+    /* Professional low-color palette */
+    --accent-color: #2b6cb0; /* subtle blue */
+    --accent-dark: #234e7a;
+    --muted-text: #495057;
+    --muted-bg: #f6f7f9;
+    --surface: #ffffff;
+    --success-color: #2f855a;
+    --danger-color: #c53030;
+    --border-color: #e6e9ee;
+    --card-shadow: 0 6px 24px rgba(20, 24, 30, 0.06);
+    --border-radius: 10px;
 }
 
 body {
     font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--muted-bg);
+    color: var(--muted-text);
     min-height: 100vh;
-    background-attachment: fixed;
     margin: 0;
     padding: 0;
 }
@@ -32,16 +33,15 @@ body {
 
 /* Main content area with subtle background */
 main.container {
-    background: rgba(255, 255, 255, 0.02);
-    backdrop-filter: blur(10px);
+    background: transparent;
     min-height: calc(100vh - 140px);
 }
 
 /* Navigation */
 .navbar {
-    background: linear-gradient(135deg, var(--dark-color) 0%, var(--primary-dark) 100%) !important;
-    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
-    padding: 1rem 2rem;
+    background: var(--surface) !important;
+    box-shadow: 0 2px 10px rgba(20, 24, 30, 0.06);
+    padding: 0.75rem 1rem;
 }
 
 .navbar .container-fluid {
@@ -70,16 +70,16 @@ main.container {
 
 /* Cards */
 .card {
-    border: none;
+    border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
     box-shadow: var(--card-shadow);
-    transition: all 0.3s ease-in-out;
-    background: white;
+    transition: all 0.2s ease-in-out;
+    background: var(--surface);
 }
 
 .card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(20, 24, 30, 0.08);
 }
 
 .card-header {
@@ -117,10 +117,10 @@ main.container {
 
 /* Code Editor Styles */
 .code-editor-container {
-    border: 1px solid #ddd;
+    border: 1px solid var(--border-color);
     border-radius: 8px;
     overflow: hidden;
-    background: #272822;
+    background: #fafbfd;
 }
 
 .CodeMirror {
@@ -131,11 +131,11 @@ main.container {
 }
 
 .code-editor-toolbar {
-    background: #343a40;
-    padding: 8px 15px;
-    border-bottom: 1px solid #495057;
-    color: white;
-    font-size: 12px;
+    background: transparent;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--muted-text);
+    font-size: 13px;
 }
 
 .code-editor-toolbar .btn {
@@ -146,26 +146,26 @@ main.container {
 
 /* Output Panel */
 .output-panel {
-    background: #2d3748;
-    color: #e2e8f0;
+    background: #0f1723; /* dark terminal feel for left panel */
+    color: #e6eef8;
     border-radius: 8px;
     max-height: 300px;
     overflow-y: auto;
     font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
     font-size: 13px;
-    line-height: 1.4;
+    line-height: 1.5;
 }
 
 .output-panel-right {
-    background: #f8f9fa;
+    background: var(--surface);
     border-radius: 8px;
-    min-height: 200px;
-    max-height: 300px;
+    min-height: 180px;
+    max-height: 400px;
     overflow-y: auto;
     font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
     font-size: 13px;
-    line-height: 1.4;
-    border: 1px solid #e9ecef;
+    line-height: 1.5;
+    border: 1px solid var(--border-color);
 }
 
 .output-panel.success, .output-panel-right.success {
@@ -192,14 +192,14 @@ main.container {
 
 /* Expected Output Styling */
 .expected-output {
-    background: #f1f8ff !important;
-    border: 1px solid #c3e88d;
+    background: #f8fafc !important;
+    border: 1px solid var(--border-color);
     border-radius: 8px;
-    padding: 15px;
+    padding: 12px;
     margin: 0;
     font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-    font-size: 14px;
-    color: #2d3748;
+    font-size: 13px;
+    color: var(--muted-text);
     font-weight: 500;
 }
 
@@ -212,14 +212,14 @@ main.container {
 }
 
 .challenge-card:hover {
-    border-color: var(--primary-color) !important;
-    box-shadow: 0 8px 30px rgba(0, 102, 204, 0.15);
-    transform: translateY(-6px);
+    border-color: var(--accent-color) !important;
+    box-shadow: 0 8px 30px rgba(43, 108, 176, 0.08);
+    transform: translateY(-4px);
 }
 
 .challenge-card .card-header {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    border-bottom: 1px solid #dee2e6;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border-color);
 }
 
 .challenge-card .card-footer {
@@ -395,12 +395,24 @@ main.container {
 .code-editor-fullscreen .CodeMirror {
     height: calc(100vh - 60px) !important;
 }
+/* Ensure toolbar is pinned inside fullscreen editor */
+.code-editor-fullscreen .code-editor-toolbar {
+    position: relative;
+    z-index: 10000;
+}
+
+/* Hide right side content while fullscreen for distraction-free editing */
+.code-editor-fullscreen ~ .challenge-sidebar,
+.code-editor-fullscreen + .challenge-sidebar,
+.code-editor-fullscreen ~ .card.mb-3 {
+    display: none !important;
+}
 
 /* Dashboard Improvements */
 .dashboard-card {
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-    color: white;
-    border: none;
+    background: linear-gradient(90deg, rgba(250,251,253,1) 0%, rgba(250,251,253,1) 100%);
+    color: var(--muted-text);
+    border: 1px solid var(--border-color);
 }
 
 .stats-card {
@@ -463,7 +475,9 @@ main.container {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    background: var(--accent-color);
+    border: none;
+    color: #fff;
 }
 
 .btn-success {
@@ -504,10 +518,7 @@ main.container {
 }
 
 .dashboard-card .display-5 {
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: var(--accent-dark);
     font-weight: 700;
 }
 

@@ -22,7 +22,7 @@ def register_view(request):
 
 def login_view(request):
     if request.user.is_authenticated:
-        if request.user.is_admin_user:
+        if request.user.is_superuser:
             return redirect('dashboard:admin_dashboard')
         else:
             return redirect('dashboard:user_dashboard')
@@ -34,8 +34,8 @@ def login_view(request):
             login(request, user)
             messages.success(request, f'Welcome back, {user.get_full_name() or user.username}!')
             
-            # Redirect based on user type
-            if user.is_admin_user:
+            # Redirect based on user privileges
+            if user.is_superuser:
                 return redirect('dashboard:admin_dashboard')
             else:
                 return redirect('dashboard:user_dashboard')

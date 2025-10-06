@@ -30,7 +30,7 @@ def week_challenges(request, week_number):
     
     # Get user's submissions for these challenges
     user_submissions = {}
-    if not request.user.is_admin_user:
+    if not request.user.is_superuser:
         submissions = Submission.objects.filter(
             user=request.user,
             challenge__in=challenges
@@ -52,7 +52,7 @@ def challenge_detail(request, challenge_id):
     
     # Get user's submission if exists
     user_submission = None
-    if not request.user.is_admin_user:
+    if not request.user.is_superuser:
         try:
             user_submission = Submission.objects.get(
                 user=request.user,
@@ -71,7 +71,7 @@ def challenge_detail(request, challenge_id):
 @login_required
 @require_POST
 def submit_solution(request, challenge_id):
-    if request.user.is_admin_user:
+    if request.user.is_superuser:
         return JsonResponse({'error': 'Admins cannot submit solutions'}, status=403)
     
     challenge = get_object_or_404(Challenge, id=challenge_id)
@@ -197,7 +197,7 @@ def execute_python_code(code):
 @login_required
 @staff_member_required
 def create_week(request):
-    if not request.user.is_admin_user:
+    if not request.user.is_superuser:
         messages.error(request, 'Access denied.')
         return redirect('dashboard:user_dashboard')
     
@@ -215,7 +215,7 @@ def create_week(request):
 @login_required
 @staff_member_required
 def create_challenge(request):
-    if not request.user.is_admin_user:
+    if not request.user.is_superuser:
         messages.error(request, 'Access denied.')
         return redirect('dashboard:user_dashboard')
     
@@ -235,7 +235,7 @@ def create_challenge(request):
 @login_required
 @staff_member_required
 def manage_challenges(request, week_id):
-    if not request.user.is_admin_user:
+    if not request.user.is_superuser:
         messages.error(request, 'Access denied.')
         return redirect('dashboard:user_dashboard')
     
