@@ -17,7 +17,7 @@ function initializeCodeEditors() {
         const editor = CodeMirror.fromTextArea(textarea, {
             lineNumbers: true,
             mode: 'python',
-            theme: 'monokai',
+            theme: 'eclipse',
             indentUnit: 4,
             indentWithTabs: false,
             lineWrapping: true,
